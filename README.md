@@ -5,12 +5,13 @@
 
 ### messages
 ```json
-{"g":0,"e":0,"p":0,"v":{}}
+{"g":0,"e":0,"p":0,"t":"c","v":{}}
 ```
 
 - g: gameId (*int*)
 - e: eventType (*int*)
 - p: playerId (*int*)
+- t: type ("c" [controller], "v" [view])
 - v: value (*any*)
 
 ### events
