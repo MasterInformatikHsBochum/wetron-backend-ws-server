@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "winston": "^2.3.1",
     "ws": "^3.1.0"
   }
 }
