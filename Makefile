@@ -8,3 +8,6 @@ build:
 
 run:
 	@docker run --rm -it -p 8080:8080 $(NAME):$(VERSION)
+
+daemon:
+	@docker run -d --restart always -p 8080:8080 --name $(NAME) $(NAME):$(VERSION)
