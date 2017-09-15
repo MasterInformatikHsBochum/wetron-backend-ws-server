@@ -35,17 +35,18 @@
 
 |Aktion                                         |Nachricht                                                          |
 |-----------------------------------------------|-------------------------------------------------------------------|
-|view->game Spiel beitreten Request             |{ "g": 1, "e": 3, "v": {} }                             |
-|game->view Spiel beitreten Response            |{ "g": 1, "e": 4, "v": { "player-id": 1 } }                        |
+|view->game Spiel beitreten Request             |{ "g": 1, "e": 3, "v": {} }                                        |
+|game->view Spiel beitreten Response            |{ "g": 1, "e": 4, "v": { "p": 1, "o": [2,3,4] } }                  |
 |game->view Spiel startet -> Countdown          |{ "g": 1, "e": 5, "v": { "countdown-ms": 3000 } }                  |
-|game->view Position wird mitgeteilt            |{ "g": 1, "e": 6, "v": { "d":0.0, "x":0, "y":0 } }                 |
+|game->view Richtung wird mitgeteilt            |{ "g": 1, "e": 6, "v": { "d": [ {"p": 1, "d": 0.0 }, ... }         |
+|view->game Collision detected                  |{ "g": 1, "e": 14, "v": {} }                                       |
 |game->view Spiel endet (Gewonnen / Verloren)   |{ "g": 1, "e": 7, "v": { "win": true } }                           |
 
 ## Kommunikation Controller <-> Game
 
 |Aktion                                         |Nachricht                                                          |
 |-----------------------------------------------|-------------------------------------------------------------------|
-|ctrl->game Connect Request                     |{ "g": 1, "e": 8, "v": { "player-id": 1 } }                        |
+|ctrl->game Connect Request                     |{ "g": 1, "e": 8, "v": { "p": 1 } }                                |
 |game->ctrl Connect Response                    |{ "g": 1, "e": 9, "v": { "success": true } }                       |
 |game->ctrl Spiel Startet -> Countdown          |{ "g": 1, "e": 10, "v": { "countdown-ms": 3000 } }                 |
 |ctrl->game Richtung wechseln                   |{ "g": 1, "e": 11, "v": { "d": 0.0 } }                             |
