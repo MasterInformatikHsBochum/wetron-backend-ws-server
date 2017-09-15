@@ -257,7 +257,7 @@ wss.on('connection', function(ws) {
                 for (player in games[game]['players']) {
                     if (games[game]['players'][player]['controller'] == ws) {
                         logger.info('Disconnected controller for player ' + player + ' for game: ' + game);
-                        
+
                         const message = JSON.stringify({
                             'g': game,
                             'e': 1,
