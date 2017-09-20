@@ -25,7 +25,7 @@ wss.on('connection', function(ws) {
         const m = JSON.parse(message);
 
         switch(m['e']) {
-            // connect
+            // Spiel beitreten Request
             case 0:
                 // type == game and gameId is set
                 if (m['t'] == 'g' && m['g'] > 0) {
@@ -43,30 +43,11 @@ wss.on('connection', function(ws) {
 
                     logger.info('Connected game container for game: ' + m['g']);
                 }
-                // type == controller and gameId and playerId is set
-                else if (m['t'] == 'c' && m['g'] > 0 && m['p'] > 0) {
-                    // is game container started?
-                    if ('game' in games[m['g']]) {
-                        if (m['p'] in games[m['g']]['players']) {
-                            games[m['g']]['players'][m['p']]['controller'] = ws;
-                            clients[ws] = m['g'];
-                        } else {
-                            games[m['g']]['players'][m['p']] = {
-                                'controller': ws
-                            }
-                            clients[ws] = m['g'];
-                        }
-
-                        logger.info('Connected controller for player ' + m['p'] + ' for game: ' + m['g']);
-
-                        // send message to game container
-                        if (games[m['g']]['game']) {
-                            games[m['g']]['game'].send(message);
-                        }
-                    }
-                }
+                break;
+            // view Spiel beitreten Response
+            case 1:
                 // type == view and gameId and playerId is set
-                else if (m['t'] == 'v' && m['g'] > 0 && m['p'] > 0) {
+                if (m['t'] == 'v' && m['g'] > 0 && m['p'] > 0) {
                     // is game container started?
                     if ('game' in games[m['g']]) {
                         if (m['p'] in games[m['g']]['players']) {
@@ -88,8 +69,115 @@ wss.on('connection', function(ws) {
                     }
                 }
                 break;
-            // disconnect
-            case 1:
+            // Startup Request
+            case 2:
+                if (m['g'] > 0 && m['p'] > 0) {
+                    logger.info('Sent startup for player ' + m['p'] + ' for game: ' + m['g']);
+
+                    // send message to controller
+                    if (games[m['g']]['players'][m['p']]['controller']) {
+                        games[m['g']]['players'][m['p']]['controller'].send(message);
+                    }
+                    // send message to view
+                    if (games[m['g']]['players'][m['p']]['controller']) {
+                        games[m['g']]['players'][m['p']]['controller'].send(message);
+                    }
+                }
+                break;
+            // Startup Response
+            case 3:
+                if (m['g'] > 0 && m['p'] > 0) {
+                    logger.info('Sent startup acknowledge for player ' + m['p'] + ' for game: ' + m['g']);
+
+                    // send message to game container
+                    if (games[m['g']]['game']) {
+                        games[m['g']]['game'].send(message);
+                    }
+                }
+                break;
+            // Spiel startet -> Countdown
+            case 4:
+                if (m['g'] > 0 && m['p'] > 0) {
+                    logger.info('Sent game start for player ' + m['p'] + ' for game: ' + m['g']);
+
+                    // send message to controller
+                    if (games[m['g']]['players'][m['p']]['controller']) {
+                        games[m['g']]['players'][m['p']]['controller'].send(message);
+                    }
+                    // send message to view
+                    if (games[m['g']]['players'][m['p']]['view']) {
+                        games[m['g']]['players'][m['p']]['view'].send(message);
+                    }
+                }
+                break;
+            // Spiel endet (Gewonnen / Verloren)
+            case 5:
+                if (m['g'] > 0 && m['p'] > 0) {
+                    logger.info('Sent game end for player ' + m['p'] + ' for game: ' + m['g']);
+
+                    // send message to controller
+                    if (games[m['g']]['players'][m['p']]['controller']) {
+                        games[m['g']]['players'][m['p']]['controller'].send(message);
+                    }
+                    // send message to view
+                    if (games[m['g']]['players'][m['p']]['view']) {
+                        games[m['g']]['players'][m['p']]['view'].send(message);
+                    }
+                }
+                break;
+            // Richtung wechseln
+            case 6:
+                if (m['g'] > 0 && m['p'] > 0) {
+                    logger.info('Sent change direction for player ' + m['p'] + ' for game: ' + m['g']);
+
+                    // send message to game container
+                    if (games[m['g']]['game']) {
+                        games[m['g']]['game'].send(message);
+                    }
+                }
+                break;
+            // Richtung wird mitgeteilt
+            case 7:
+                if (m['g'] > 0 && m['p'] > 0) {
+                    logger.info('Sent position for player ' + m['p'] + ' for game: ' + m['g']);
+
+                    // send message to controller
+                    if (games[m['g']]['players'][m['p']]['controller']) {
+                        games[m['g']]['players'][m['p']]['controller'].send(message);
+                    }
+                    // send message to view
+                    if (games[m['g']]['players'][m['p']]['view']) {
+                        games[m['g']]['players'][m['p']]['view'].send(message);
+                    }
+                }
+                break;
+            // ctrl Spiel beitreten Response
+            case 8:
+                // type == controller and gameId and playerId is set
+                if (m['t'] == 'c' && m['g'] > 0 && m['p'] > 0) {
+                    // is game container started?
+                    if ('game' in games[m['g']]) {
+                        if (m['p'] in games[m['g']]['players']) {
+                            games[m['g']]['players'][m['p']]['controller'] = ws;
+                            clients[ws] = m['g'];
+                        } else {
+                            games[m['g']]['players'][m['p']] = {
+                                'controller': ws
+                            }
+                            clients[ws] = m['g'];
+                        }
+
+                        logger.info('Connected controller for player ' + m['p'] + ' for game: ' + m['g']);
+
+                        // send message to game container
+                        if (games[m['g']]['game']) {
+                            games[m['g']]['game'].send(message);
+                        }
+                    }
+                }
+                break;
+            // Controller/View Verbindung verloren
+            case 9:
                 // type == game and gameId is set
                 if (m['t'] == 'g' && m['g'] > 0) {
                     delete games[m['g']]['game'];
@@ -129,88 +217,6 @@ wss.on('connection', function(ws) {
                         if (games[m['g']]['game']) {
                             games[m['g']]['game'].send(message);
                         }
-                    }
-                }
-                break;
-            // startup
-            case 2:
-                if (m['g'] > 0 && m['p'] > 0) {
-                    logger.info('Sent startup for player ' + m['p'] + ' for game: ' + m['g']);
-
-                    // send message to controller
-                    if (games[m['g']]['players'][m['p']]['controller']) {
-                        games[m['g']]['players'][m['p']]['controller'].send(message);
-                    }
-                    // send message to view
-                    if (games[m['g']]['players'][m['p']]['controller']) {
-                        games[m['g']]['players'][m['p']]['controller'].send(message);
-                    }
-                }
-                break;
-            // startup acknowledge
-            case 3:
-                if (m['g'] > 0 && m['p'] > 0) {
-                    logger.info('Sent startup acknowledge for player ' + m['p'] + ' for game: ' + m['g']);
-
-                    // send message to game container
-                    if (games[m['g']]['game']) {
-                        games[m['g']]['game'].send(message);
-                    }
-                }
-                break;
-            // game start
-            case 4:
-                if (m['g'] > 0 && m['p'] > 0) {
-                    logger.info('Sent game start for player ' + m['p'] + ' for game: ' + m['g']);
-
-                    // send message to controller
-                    if (games[m['g']]['players'][m['p']]['controller']) {
-                        games[m['g']]['players'][m['p']]['controller'].send(message);
-                    }
-                    // send message to view
-                    if (games[m['g']]['players'][m['p']]['view']) {
-                        games[m['g']]['players'][m['p']]['view'].send(message);
-                    }
-                }
-                break;
-            // game end
-            case 5:
-                if (m['g'] > 0 && m['p'] > 0) {
-                    logger.info('Sent game end for player ' + m['p'] + ' for game: ' + m['g']);
-
-                    // send message to controller
-                    if (games[m['g']]['players'][m['p']]['controller']) {
-                        games[m['g']]['players'][m['p']]['controller'].send(message);
-                    }
-                    // send message to view
-                    if (games[m['g']]['players'][m['p']]['view']) {
-                        games[m['g']]['players'][m['p']]['view'].send(message);
-                    }
-                }
-                break;
-            // change direction
-            case 6:
-                if (m['g'] > 0 && m['p'] > 0) {
-                    logger.info('Sent change direction for player ' + m['p'] + ' for game: ' + m['g']);
-
-                    // send message to game container
-                    if (games[m['g']]['game']) {
-                        games[m['g']]['game'].send(message);
-                    }
-                }
-                break;
-            // position
-            case 7:
-                if (m['g'] > 0 && m['p'] > 0) {
-                    logger.info('Sent position for player ' + m['p'] + ' for game: ' + m['g']);
-
-                    // send message to controller
-                    if (games[m['g']]['players'][m['p']]['controller']) {
-                        games[m['g']]['players'][m['p']]['controller'].send(message);
-                    }
-                    // send message to view
-                    if (games[m['g']]['players'][m['p']]['view']) {
-                        games[m['g']]['players'][m['p']]['view'].send(message);
                     }
                 }
                 break;
