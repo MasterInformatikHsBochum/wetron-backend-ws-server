@@ -284,20 +284,29 @@ wss.on('connection', function(ws) {
                             't': 'g',
                             'v': undefined
                         });
-                        // send message to controller container
-                        if (games[game]['players'][player]['controller']) {
-                            games[game]['players'][player]['controller'].send(message);
-                            games[game]['players'][player]['controller'].close();
-                            delete clients[games[game]['players'][player]['controller']];
-                            delete games[game]['players'][player]['controller'];
+
+                        try {
+                            // send message to controller container
+                            if (games[game]['players'][player]['controller']) {
+                                games[game]['players'][player]['controller'].send(message);
+                                games[game]['players'][player]['controller'].close();
+                                delete clients[games[game]['players'][player]['controller']];
+                                delete games[game]['players'][player]['controller'];
+                            }                                                    
+                        } catch (e) {
+                            logger.error(e);
                         }
 
-                        // send message to view container
-                        if (games[game]['players'][player]['view']) {
-                            games[game]['players'][player]['view'].send(message);
-                            games[game]['players'][player]['view'].close();
-                            delete clients[games[game]['players'][player]['view']];
-                            delete games[game]['players'][player]['view'];
+                        try {
+                            // send message to view container
+                            if (games[game]['players'][player]['view']) {
+                                games[game]['players'][player]['view'].send(message);
+                                games[game]['players'][player]['view'].close();
+                                delete clients[games[game]['players'][player]['view']];
+                                delete games[game]['players'][player]['view'];
+                            }
+                        } catch (e) {
+                            logger.error(e);
                         }
                     }
 
@@ -319,11 +328,19 @@ wss.on('connection', function(ws) {
 
                         // send message to game container
                         if (games[game]['game']) {
-                            games[game]['game'].send(message);
+                            try {
+                                games[game]['game'].send(message);
+                            } catch (e) {
+                                logger.error(e);
+                            }
                         }
                         // send message to view container
                         if (games[game]['players'][player]['view']) {
-                            games[game]['players'][player]['view'].send(message);
+                            try {
+                                games[game]['players'][player]['view'].send(message);
+                            } catch (e) {
+                                logger.error(e);
+                            }
                         }
 
                         delete games[game]['players'][player]['controller'];
@@ -340,11 +357,19 @@ wss.on('connection', function(ws) {
 
                         // send message to game container
                         if (games[game]['game']) {
-                            games[game]['game'].send(message);
+                            try {
+                                games[game]['game'].send(message);
+                            } catch (e) {
+                                logger.error(e);
+                            }
                         }
                         // send message to controller container
                         if (games[game]['players'][player]['controller']) {
-                            games[game]['players'][player]['controller'].send(message);
+                            try {
+                                games[game]['players'][player]['controller'].send(message);
+                            } catch (e) {
+                                logger.error(e);
+                            }
                         }
 
                         delete games[game]['players'][player]['view'];
