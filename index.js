@@ -49,23 +49,21 @@ wss.on('connection', function(ws) {
                     else if (m['t'] == 'c' && m['g'] > 0) {
                         // is game container started?
                         if ('game' in games[m['g']]) {
-                            const player = Object.keys(games[m['g']]['players']).length + 1;
-                            m['p'] = player;
-                            if (player in games[m['g']]['players']) {
-                                games[m['g']]['players'][player]['controller'] = ws;
+                            if (m['p'] in games[m['g']]['players']) {
+                                games[m['g']]['players'][m['p']]['controller'] = ws;
                                 clients[ws] = m['g'];
                             } else {
-                                games[m['g']]['players'][player] = {
+                                games[m['g']]['players'][m['p']] = {
                                     'controller': ws
                                 }
                                 clients[ws] = m['g'];
                             }
 
-                            logger.info('Connected controller for player ' + player + ' for game: ' + m['g']);
+                            logger.info('Connected controller for player ' + m['p'] + ' for game: ' + m['g']);
 
                             // send message to game container
                             if (games[m['g']]['game']) {
-                                games[m['g']]['game'].send(JSON.stringify(m));
+                                games[m['g']]['game'].send(message);
                             }
                         }
                     }
