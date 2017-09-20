@@ -43,28 +43,72 @@ wss.on('connection', function(ws) {
 
                     logger.info('Connected game container for game: ' + m['g']);
                 }
-                break;
-            // view Spiel beitreten Response
-            case 1:
-                // type == view and gameId and playerId is set
-                if (m['t'] == 'v' && m['g'] > 0 && m['p'] > 0) {
+                // type == controller and gameId is set
+                else if (m['t'] == 'c' && m['g'] > 0) {
                     // is game container started?
                     if ('game' in games[m['g']]) {
-                        if (m['p'] in games[m['g']]['players']) {
-                            games[m['g']]['players'][m['p']]['view'] = ws;
+                        const player = Object.keys(games[m['g']]['players']).length + 1;
+                        m['p'] = player;
+                        if (player in games[m['g']]['players']) {
+                            games[m['g']]['players'][player]['controller'] = ws;
                             clients[ws] = m['g'];
                         } else {
-                            games[m['g']]['players'][m['p']] = {
+                            games[m['g']]['players'][player] = {
+                                'controller': ws
+                            }
+                            clients[ws] = m['g'];
+                        }
+
+                        logger.info('Connected controller for player ' + player + ' for game: ' + m['g']);
+
+                        // send message to game container
+                        if (games[m['g']]['game']) {
+                            games[m['g']]['game'].send(JSON.stringify(m));
+                        }
+                    }
+                }
+                // type == view and gameId is set
+                else if (m['t'] == 'v' && m['g'] > 0) {
+                    // is game container started?
+                    if ('game' in games[m['g']]) {
+                        const player = Object.keys(games[m['g']]['players']).length + 1;
+                        m['p'] = player;
+                        if (player in games[m['g']]['players']) {
+                            games[m['g']]['players'][player]['view'] = ws;
+                            clients[ws] = m['g'];
+                        } else {
+                            games[m['g']]['players'][player] = {
                                 'view': ws
                             }
                             clients[ws] = m['g'];
                         }
 
-                        logger.info('Connected view for player ' + m['p'] + ' for game: ' + m['g']);
+                        logger.info('Connected view for player ' + player + ' for game: ' + m['g']);
 
                         // send message to game container
                         if (games[m['g']]['game']) {
-                            games[m['g']]['game'].send(message);
+                            games[m['g']]['game'].send(JSON.stringify(m));
+                        }
+                    }
+                }
+                break;
+            // view Spiel beitreten Response
+            case 1:
+                if (m['g'] > 0 && m['p'] > 0) {
+                    const player = m['p'];
+                    delete m['p'];
+
+                    logger.info('Sent connection response for view of player ' + player + ' for game: ' + m['g']);
+
+                    // send message to view
+                    if (games[m['g']]['players'][player]['view']) {
+                        games[m['g']]['players'][player]['view'].send(JSON.stringify(m));
+                    }
+
+                    if (m['v']['success'] !== true) {
+                        if (player in games[m['g']]['players']) {
+                            delete clients[games[m['g']]['players'][player]['controller']];
+                            delete games[m['g']]['players'][player]['view'];
                         }
                     }
                 }
@@ -153,25 +197,21 @@ wss.on('connection', function(ws) {
                 break;
             // ctrl Spiel beitreten Response
             case 8:
-                // type == controller and gameId and playerId is set
-                if (m['t'] == 'c' && m['g'] > 0 && m['p'] > 0) {
-                    // is game container started?
-                    if ('game' in games[m['g']]) {
-                        if (m['p'] in games[m['g']]['players']) {
-                            games[m['g']]['players'][m['p']]['controller'] = ws;
-                            clients[ws] = m['g'];
-                        } else {
-                            games[m['g']]['players'][m['p']] = {
-                                'controller': ws
-                            }
-                            clients[ws] = m['g'];
-                        }
+                if (m['g'] > 0 && m['p'] > 0) {
+                    const player = m['p'];
+                    delete m['p'];
 
-                        logger.info('Connected controller for player ' + m['p'] + ' for game: ' + m['g']);
+                    logger.info('Sent connection response for controller of player ' + player + ' for game: ' + m['g']);
 
-                        // send message to game container
-                        if (games[m['g']]['game']) {
-                            games[m['g']]['game'].send(message);
+                    // send message to controller
+                    if (games[m['g']]['players'][player]['controller']) {
+                        games[m['g']]['players'][player]['controller'].send(JSON.stringify(m));
+                    }
+
+                    if (m['v']['success'] !== true) {
+                        if (player in games[m['g']]['players']) {
+                            delete clients[games[m['g']]['players'][player]['controller']];
+                            delete games[m['g']]['players'][player]['controller'];
                         }
                     }
                 }
