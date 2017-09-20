@@ -33,40 +33,28 @@
 
 ## Kommunikation View <-> Game
 
-|Aktion                                         |Nachricht                                                          |
-|-----------------------------------------------|-------------------------------------------------------------------|
-|view->game Spiel beitreten Request             |{ "g": 1, "e": 3, "v": {} }                                        |
-|game->view Spiel beitreten Response            |{ "g": 1, "e": 4, "v": { "p": 1, "o": [2,3,4] } }                  |
-|game->view Spiel startet -> Countdown          |{ "g": 1, "e": 5, "v": { "countdown-ms": 3000 } }                  |
-|game->view Richtung wird mitgeteilt            |{ "g": 1, "e": 6, "v": { "d": [ {"p": 1, "d": 0.0 }, ... }         |
-|view->game Collision detected                  |{ "g": 1, "e": 14, "v": {} }                                       |
-|game->view Spiel endet (Gewonnen / Verloren)   |{ "g": 1, "e": 7, "v": { "win": true } }                           |
+|Aktion                                         |Nachricht                                                                      |
+|-----------------------------------------------|-------------------------------------------------------------------------------|
+|view->game Spiel beitreten Request             |{ "g": 1,         "t": "v", "e": 0, "v": null }                                |
+|game->view Spiel beitreten Response            |{ "g": 1, "p": 1, "t": "g", "e": 1, "v": { "success": true, "p": 1, "o": [2,3,4] } }            |
+|game->view Startup Request                     |{ "g": 1, "p": 1, "t": "g", "e": 2, "v": { "x": 1, "y": 2, "d": 0.0 } }        |
+|view->game Startup Response                    |{ "g": 1, "p": 1, "t": "v", "e": 3, "v": { "x": 1, "y": 2, "d": 0.0 } }        |
+|game->view Spiel startet -> Countdown          |{ "g": 1, "p": 1, "t": "g", "e": 4, "v": { "countdown-ms": 3000 } }            |
+|game->view Richtung wird mitgeteilt            |{ "g": 1, "p": 1, "t": "g", "e": 7, "v": [ {"p": 1, "x": 1, "y": 2, "d": 0.0 }]|
+|game->view Spiel endet (Gewonnen / Verloren)   |{ "g": 1, "p": 1, "t": "g", "e": 5, "v": { "win": true } }                     |
 
 ## Kommunikation Controller <-> Game
 
-|Aktion                                         |Nachricht                                                          |
-|-----------------------------------------------|-------------------------------------------------------------------|
-|ctrl->game Connect Request                     |{ "g": 1, "e": 8, "v": { "p": 1 } }                                |
-|game->ctrl Connect Response                    |{ "g": 1, "e": 9, "v": { "success": true } }                       |
-|game->ctrl Spiel Startet -> Countdown          |{ "g": 1, "e": 10, "v": { "countdown-ms": 3000 } }                 |
-|ctrl->game Richtung wechseln                   |{ "g": 1, "e": 11, "v": { "d": 0.0 } }                             |
-|game->ctrl Spiel endet (Gewonnen / Verloren)   |{ "g": 1, "e": 12, "v": { "win": true } }                          |
+|Aktion                                         |Nachricht                                                                      |
+|-----------------------------------------------|-------------------------------------------------------------------------------|
+|ctrl->game Spiel beitreten Request             |{ "g": 1,         "t": "c", "e": 0, "v": { "p": 1 } }                          |
+|game->ctrl Spiel beitreten Response            |{ "g": 1, "p": 1, "t": "g", "e": 8, "v": { "success": true } }                 |
+|game->ctrl Spiel Startet -> Countdown          |{ "g": 1, "p": 1, "t": "g", "e": 4, "v": { "countdown-ms": 3000 } }            |
+|ctrl->game Richtung wechseln                   |{ "g": 1, "p": 1, "t": "c", "e": 6, "v": { "d": 0.0 } } r: 0,25 l: 0x75:       |
+|game->ctrl Spiel endet (Gewonnen / Verloren)   |{ "g": 1, "p": 1, "t": "g", "e": 5, "v": { "win": true } }                     |
 
 ## Kommunikation WS <-> Game
 
-### Aufgaben von WS
-
-* Leitet Anfragen von außen an den jeweiligen Docker-Container um in dem das Spiel ausgeführt wird.
-* Vergibt für jede Verbindung eine eindeutige ID und sendet diese mit jeder eingehenden Nachricht zum Spiel.
-* Teilt dem jeweiligen Spiel mit, wenn eine Verbindung abbricht
-
-```json
-{ "id": 1, "msg": {} }
-```
-
-|Aktion                                         |Nachricht                                                      |
-|-----------------------------------------------|---------------------------------------------------------------|
-|ws->game Verbindung verloren                   |{ "id": 1, "msg": { "event": 13} }                             |
-
-* id: Einzigartige Id pro Verbindung
-* msg: Dateninhalt
+|Aktion                                         |Nachricht                              |
+|-----------------------------------------------|---------------------------------------|
+|wss->game Controller/View Verbindung verloren  |{ "g": 1, "p": 1, "t": "c", "e": 9 }   |
