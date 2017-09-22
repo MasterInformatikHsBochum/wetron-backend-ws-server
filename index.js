@@ -277,7 +277,7 @@ wss.on('connection', function(ws) {
                     for (player in games[game]['players']) {
                         var message = JSON.stringify({
                             'g': game,
-                            'e': 1,
+                            'e': 9,
                             'p': player,
                             't': 'g',
                             'v': undefined
@@ -318,7 +318,7 @@ wss.on('connection', function(ws) {
 
                         const message = JSON.stringify({
                             'g': game,
-                            'e': 1,
+                            'e': 9,
                             'p': player,
                             't': 'c',
                             'v': undefined
@@ -347,7 +347,7 @@ wss.on('connection', function(ws) {
 
                         const message = JSON.stringify({
                             'g': game,
-                            'e': 1,
+                            'e': 9,
                             'p': player,
                             't': 'v',
                             'v': undefined
