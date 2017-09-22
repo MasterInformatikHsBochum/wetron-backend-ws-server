@@ -375,7 +375,9 @@ wss.on('connection', function(ws) {
                         delete games[game]['players'][player]['view'];
 
                         // close connection for controller
-                        games[game]['players'][player]['controller'].close();
+                        if (games[game]['players'][player]['controller']) {
+                            games[game]['players'][player]['controller'].close();
+                        }
 
                         if (Object.keys(games[game]['players'][player]).length === 0) {
                             delete games[game]['players'][player];
