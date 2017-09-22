@@ -96,7 +96,6 @@ wss.on('connection', function(ws) {
                 case 1:
                     if (m['g'] > 0 && m['p'] > 0) {
                         const player = m['p'];
-                        delete m['p'];
 
                         logger.info('Sent connection response for view of player ' + player + ' for game: ' + m['g']);
 
@@ -332,7 +331,7 @@ wss.on('connection', function(ws) {
                                 logger.error(e);
                             }
                         }
-                        // send message to view container
+                        // send message to view
                         if (games[game]['players'][player]['view']) {
                             try {
                                 games[game]['players'][player]['view'].send(message);
@@ -342,10 +341,14 @@ wss.on('connection', function(ws) {
                         }
 
                         delete games[game]['players'][player]['controller'];
+
+                        if (Object.keys(games[game]['players'][player]).length === 0) {
+                            delete games[game]['players'][player];
+                        }
                     } else if (games[game]['players'][player]['view'] == ws) {
                         logger.info('Disconnected view for player ' + player + ' for game: ' + game);
 
-                        const message = JSON.stringify({
+                        var message = JSON.stringify({
                             'g': parseInt(game),
                             'e': 9,
                             'p': parseInt(player),
@@ -361,7 +364,7 @@ wss.on('connection', function(ws) {
                                 logger.error(e);
                             }
                         }
-                        // send message to controller container
+                        // send message to controller
                         if (games[game]['players'][player]['controller']) {
                             try {
                                 games[game]['players'][player]['controller'].send(message);
@@ -369,8 +372,14 @@ wss.on('connection', function(ws) {
                                 logger.error(e);
                             }
                         }
-
                         delete games[game]['players'][player]['view'];
+
+                        // close connection for controller
+                        games[game]['players'][player]['controller'].close();
+
+                        if (Object.keys(games[game]['players'][player]).length === 0) {
+                            delete games[game]['players'][player];
+                        }
                     }
                 }
             }
