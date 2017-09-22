@@ -276,9 +276,9 @@ wss.on('connection', function(ws) {
 
                     for (player in games[game]['players']) {
                         var message = JSON.stringify({
-                            'g': game,
+                            'g': parseInt(game),
                             'e': 9,
-                            'p': player,
+                            'p': parseInt(player),
                             't': 'g',
                             'v': undefined
                         });
@@ -317,9 +317,9 @@ wss.on('connection', function(ws) {
                         logger.info('Disconnected controller for player ' + player + ' for game: ' + game);
 
                         const message = JSON.stringify({
-                            'g': game,
+                            'g': parseInt(game),
                             'e': 9,
-                            'p': player,
+                            'p': parseInt(player),
                             't': 'c',
                             'v': undefined
                         });
@@ -346,9 +346,9 @@ wss.on('connection', function(ws) {
                         logger.info('Disconnected view for player ' + player + ' for game: ' + game);
 
                         const message = JSON.stringify({
-                            'g': game,
+                            'g': parseInt(game),
                             'e': 9,
-                            'p': player,
+                            'p': parseInt(player),
                             't': 'v',
                             'v': undefined
                         });
