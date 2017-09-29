@@ -15,10 +15,24 @@ var logger = new (winston.Logger)({
     ]
 });
 
-const ws = new WebSocket('http://' + host + ':' + port);
+var game = 1;
+process.argv.forEach(function (val, index, array) {
+    if (val.startsWith('g=')) {
+        game = parseInt(val.slice(2));
+    }
+});
+
+const ws = new WebSocket('ws://' + host + ':' + port);
+const type = 'g';
 
 ws.on('open', function() {
-    ws.send('{"g":1,"e":0,"t":"g"}');;
+    var m = {
+        'g': game,
+        't': type,
+        'e': 0
+    };
+
+    ws.send(JSON.stringify(m));
 });
 
 ws.on('message', function(message) {
