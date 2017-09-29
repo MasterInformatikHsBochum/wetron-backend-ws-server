@@ -1,5 +1,5 @@
-var port = 8080,
-    host = 'localhost'
+var port = 8000,
+    host = '5.45.108.170',
     WebSocket = require('ws'),
     winston = require('winston');
 
