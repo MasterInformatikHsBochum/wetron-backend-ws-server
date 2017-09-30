@@ -36,7 +36,7 @@
 |Aktion                                         |Nachricht                                                                      |
 |-----------------------------------------------|-------------------------------------------------------------------------------|
 |view->game Spiel beitreten Request             |{ "g": 1,         "t": "v", "e": 0, "v": null }                                |
-|game->view Spiel beitreten Response            |{ "g": 1, "p": 1, "t": "g", "e": 1, "v": { "success": true, "o": [2,3,4] } }            |
+|game->view Spiel beitreten Response            |{ "g": 1, "p": 1, "t": "g", "e": 1, "v": { "success": true, "o": [2,3,4], "grid": { "w":100, "h":100 } } }            |
 |game->view Spiel startet -> Countdown          |{ "g": 1, "p": 1, "t": "g", "e": 4, "v": { "countdown-ms": 3000 } }            |
 |game->view Richtung wird mitgeteilt            |{ "g": 1, "p": 1, "t": "g", "e": 7, "v": [{"p": 1, "x": 1, "y": 2, "d": 0.0 }, {"p": 2, "x": 5, "y": 10, "d": 0.5 }, ...]|
 |game->view Spiel endet (Gewonnen / Verloren)   |{ "g": 1, "p": 1, "t": "g", "e": 5, "v": { "win": true } }                     |
