@@ -49,6 +49,7 @@
 |game->ctrl Spiel beitreten Response            |{ "g": 1, "p": 1, "t": "g", "e": 8, "v": { "success": true } }                 |
 |game->ctrl Spiel Startet -> Countdown          |{ "g": 1, "p": 1, "t": "g", "e": 4, "v": { "countdown-ms": 3000 } }            |
 |ctrl->game Richtung wechseln                   |{ "g": 1, "p": 1, "t": "c", "e": 6, "v": { "d": 0 } } // r: 90, l: 360       |
+|game->ctrl Richtung wird mitgeteilt            |{ "g": 1, "p": 1, "t": "g", "e": 7, "v": [{"p": 1, "x": 1, "y": 2, "d": 0.0 }, {"p": 2, "x": 5, "y": 10, "d": 0.5 }, ...]|
 |game->ctrl Spiel endet (Gewonnen / Verloren)   |{ "g": 1, "p": 1, "t": "g", "e": 5, "v": { "win": true } }                     |
 
 ## Kommunikation WS <-> Game
