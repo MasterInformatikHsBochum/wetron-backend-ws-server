@@ -185,9 +185,9 @@ wss.on('connection', function(ws) {
                         logger.info('Sent position for player ' + m['p'] + ' for game: ' + m['g']);
 
                         // send message to controller
-                        if (games[m['g']]['players'][m['p']]['controller']) {
-                            games[m['g']]['players'][m['p']]['controller'].send(message);
-                        }
+                        // if (games[m['g']]['players'][m['p']]['controller']) {
+                        //     games[m['g']]['players'][m['p']]['controller'].send(message);
+                        // }
                         // send message to view
                         if (games[m['g']]['players'][m['p']]['view']) {
                             games[m['g']]['players'][m['p']]['view'].send(message);
